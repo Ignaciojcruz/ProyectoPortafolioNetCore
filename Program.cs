@@ -1,7 +1,12 @@
+using ProyectoPortafolioNetCore.Interfaces;
+using ProyectoPortafolioNetCore.Servicios;
+using ProyectoPortafolioNetCore.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddTransient<IRepositorioProyecto, RepositorioProyectos>();
 
 var app = builder.Build();
 
