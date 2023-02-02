@@ -10,16 +10,21 @@ namespace ProyectoPortafolioNetCore.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IRepositorioProyecto repositorioProyectos;
+        private readonly IServicioEmail _servicioEmail;
 
-        public HomeController(ILogger<HomeController> logger, IRepositorioProyecto repositorio)
+        public HomeController(ILogger<HomeController> logger
+                                , IRepositorioProyecto repositorio
+                                , IServicioEmail servicioEmail)
         {
             _logger = logger;
             repositorioProyectos = repositorio;
+            _servicioEmail = servicioEmail;
         }
 
         public IActionResult Index()
-        {                 
-            
+        {
+
+            _logger.LogInformation("Esto es un mensaje desde el logger");
             var proyectos = repositorioProyectos.ObtenerProyectos().Take(3).ToList();
             var modelo = new Models.HomeIndexViewModel() { Proyectos= proyectos };
 
@@ -28,7 +33,27 @@ namespace ProyectoPortafolioNetCore.Controllers
 
         
 
-        public IActionResult Privacy()
+        public IActionResult Proyectos()
+        {
+            var proyectos = repositorioProyectos.ObtenerProyectos();
+            return View(proyectos);
+        }
+
+        [HttpGet]
+        public IActionResult Contacto()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Contacto(Contacto contacto)
+        {
+            await _servicioEmail.Enviar(contacto);
+
+            return RedirectToAction("Gracias");
+        }
+
+        public IActionResult Gracias()
         {
             return View();
         }
